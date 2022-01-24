@@ -10,7 +10,7 @@ import createWebp from "./gulp_modules/images-webp.js";
 import getWatchers from "./gulp_modules/watch.js";
 import transformPug from "./gulp_modules/pug.js";
 import getCopying from "./gulp_modules/copying.js";
-import creteArchive from "./gulp_modules/archiving.js";
+// import creteArchive from "./gulp_modules/archiving.js";
 
 const { parallel, series } = pluginsObject.gulp;
 
@@ -38,7 +38,7 @@ const production = series(
     createWebp,
     transformPug
   ),
-  series(getCopying, creteArchive)
+  series(getCopying)
 );
 
 const test = series(getStyleFile);

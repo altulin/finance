@@ -1,6 +1,6 @@
 .promo {
   background-color: #151419;
-  padding-top: 200px;
+  padding-top: 100px;
 
   @include mw($tb) {
     padding-top: 40px;
@@ -25,13 +25,9 @@
       font-size: 38px;
     }
   }
-
 }
 
 .video {
-
-
-
   &__wrap {
     // height: 446px;
     padding-top: 56.25%;

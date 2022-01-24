@@ -2,9 +2,10 @@ header.header#header(data-scroll data-scroll-sticky data-scroll-target=".page-bo
 	.header__inner.container.container--header
 
 		a.header__logo.logo(href="/index.html")
-			+img-retina(`logo`, `png`, `логотип`, `logo__img`, `145`, `46`)
+			//- +img-retina(`logo`, `png`, `логотип`, `logo__img`, `145`, `46`)
+			+img-retina(node?'logo-node':'logo', `png`, `логотип`, `logo__img`, `145`, `46`)
 
-		a.header__user.private.link(href="/form-login.html")
+		a.header__user.private.link(href="/form-login.html" class=(node?'link--node':''))
 			span.private__text Войти в личный кабинет
 			span.private__icon
 				+svg(`user`, `40`, '40', `private__svg`)(class="tablet-visibility")

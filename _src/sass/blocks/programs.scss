@@ -26,6 +26,28 @@
     @include mw(412px) {
       padding-bottom: 270px;
     }
+
+    &--node {
+      background-image: url("/img/coin-man.png");
+      background-size: 55% auto;
+      background-position: bottom right;
+      padding-bottom: 140px;
+
+      @include mw(1000px) {
+        background-size: 50%;
+        background-position: bottom center;
+        padding-bottom: 420px;
+      }
+
+      @include mw($ph) {
+        padding-bottom: 320px;
+        background-size: 80%;
+      }
+
+      @include mw(412px) {
+        padding-bottom: 270px;
+      }
+    }
   }
 
   &__left {
@@ -44,7 +66,7 @@
     @include font("Gilroy");
     font-size: 20px;
     line-height: 150%;
-    color: #7A838D;
+    color: #7a838d;
     max-width: 488px;
 
     @include mw(1000px) {
@@ -56,6 +78,10 @@
     max-width: 417px;
     width: 100%;
     padding-top: 159px;
+
+    &--node {
+      max-width: 450px;
+    }
 
     @include mw(1000px) {
       padding-top: 60px;
@@ -71,11 +97,17 @@
   &__link {
     display: block;
     font-size: 16px;
-    line-height: 14px;
+    line-height: 16px;
     text-align: center;
-    padding-top: 33px;
-    padding-bottom: 33px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.12) 92.19%);
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.07) 0%,
+      rgba(255, 255, 255, 0.12) 92.19%
+    );
     border-radius: 4px;
     color: $white;
     transition: opacity 0.3s;
@@ -97,19 +129,17 @@
 }
 
 .container {
-
   &--programs {
     max-width: 1186px;
   }
 }
 
 .bonus {
-
   &__item {
     display: flex;
     align-items: center;
 
-    &+li {
+    & + li {
       margin-top: 40px;
     }
   }
@@ -119,7 +149,6 @@
     width: 74px;
     height: 69px;
     background-image: url("/img/bonus.png");
-
   }
 
   &__text {
@@ -129,6 +158,10 @@
     max-width: 254px;
     margin-left: 40px;
     letter-spacing: -0.04em;
+
+    &--node {
+      max-width: none;
+    }
 
     @include mw($ph) {
       margin-left: 20px;

@@ -43,9 +43,17 @@
   line-height: 14px;
   color: $white;
   border-radius: 8px;
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.12) 92.19%);
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.12) 92.19%
+  );
   box-shadow: inset 0px 2.60282px 2.60282px rgba(255, 255, 255, 0.08);
   transition: 0.3s;
+
+  &--node {
+    background: linear-gradient(360deg, #ff6060 0%, #ff0100 100%);
+  }
 
   @include hocus() {
     opacity: 0.7;
@@ -61,9 +69,7 @@
     box-shadow: none;
   }
 
-
   &__text {
-
     @include mw($tb) {
       display: none;
     }

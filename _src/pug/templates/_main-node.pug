@@ -2,8 +2,8 @@ doctype html
 html(lang="ru")
   include ../helpers/arrays
   include ../modules/_head
-
-  body.page-body.hh(class=(node?'page-body__node':''))
+  -let node = true
+  body.page-body
     //- include ../helpers/arrays
     //- .scroll#scroll(data-scroll="true" data-scroll-section)
     include ../modules/_header

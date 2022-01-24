@@ -61,6 +61,18 @@ const createSliderNews = () => {
   }
 };
 
+const createSliderCoin = () => {
+  const slider = $(".coin__list");
+
+  if (check(slider) && startWidth < 768) {
+    slider.slick({
+      slidesToShow: 1,
+      speed: 600,
+      rows: 0,
+    });
+  }
+};
+
 const makeRange = (num) => {
   const inputRange = $(`#package-${num}`);
 
@@ -325,8 +337,19 @@ const createLightbox = () => {
   }
 };
 
+const scrollToTop = () => {
+  const link = $(".main-footer__up-link");
+
+  if (check(link)) {
+    link.on("click", () => {
+      $("html, body").animate({ scrollTop: 0 }, "slow");
+      return false;
+    });
+  }
+};
+
 $(function () {
-  resize();
+  // resize();
   createSlider();
   createSliderNews();
   playVideo();
@@ -340,4 +363,6 @@ $(function () {
   stickyHeader();
   createChart();
   createLightbox();
+  createSliderCoin();
+  scrollToTop();
 });
