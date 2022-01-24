@@ -65,6 +65,12 @@
     border-radius: 40px;
     padding-top: 100px;
     padding-bottom: 100px;
+
+    @include mw($tb) {
+      padding-top: 40px;
+      padding-bottom: 40px;
+      border-radius: 8px;
+    }
   }
 
   &__inner {
@@ -95,6 +101,15 @@
       align-items: flex-start;
       margin-bottom: 40px;
     }
+  }
+
+  &__content {
+    min-width: 420px;
+  }
+
+  &__wrap {
+    overflow: scroll;
+    width: 100%;
   }
 
 }
@@ -133,7 +148,10 @@
 
     @include mw($tb) {
       flex-grow: 0;
+      margin-right: 10px;
+      margin-bottom: 10px;
     }
+
   }
 
   &__link {
@@ -214,6 +232,10 @@
 [role=tab][aria-selected=true] {
   background-color: #272732;
   border: 1px solid #373741;
+}
+
+[role=tab]:hover:not([aria-selected=true]) {
+  background-color: #272732;
 }
 
 

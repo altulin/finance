@@ -41,16 +41,7 @@
         </div>
         <div class="promo__video video">
           <div class="video__inner">
-            <video class="video__body" id="video-promo" width="1320" height="446" poster="/img/poster.png">
-              <source src="/video/test.mp4" type="video/mp4">
-                <source src="/video/test.webm" type="video/webm">
-            </video>
-            <button class="video__btn" type="button">
-              <picture>
-                <source type="image/webp" srcset="/img/webp/video_btn.webp 1x, /img/webp/video_btn@2x.webp 2x" />
-                <img class="video__btn" src="/img/video_btn.png" srcset="/img/video_btn.png 1x, /img/video_btn@2x.png 2x" alt="кнопка видео" width="262" height="262" />
-              </picture>
-            </button>
+            <lite-youtube class="video__youtube" videoid="MyRhhKPbU8k" style="background-image: url('/img/desc.jpg');"></lite-youtube>
           </div>
         </div>
       </div>
@@ -59,8 +50,8 @@
       <section class="how mb160">
         <div class="how__inner container">
           <h2 class="how__title title" data-scroll data-scroll-speed="1">Как это работает?</h2>
-          <ul class="how__list" data-scroll data-scroll-speed="2">
-            <li class="how__item how-point">
+          <ul class="how__list swiper-wrapper" data-scroll data-scroll-speed="2">
+            <li class="how__item how-point swiper-slide">
               <div class="how-point__inner">
                 <figure class="how-point__img how-point__img--1"></figure>
                 <div class="how-point__box">
@@ -69,7 +60,7 @@
                 </div>
               </div>
             </li>
-            <li class="how__item how-point">
+            <li class="how__item how-point swiper-slide">
               <div class="how-point__inner">
                 <figure class="how-point__img how-point__img--2"></figure>
                 <div class="how-point__box">
@@ -78,7 +69,7 @@
                 </div>
               </div>
             </li>
-            <li class="how__item how-point">
+            <li class="how__item how-point swiper-slide">
               <div class="how-point__inner">
                 <figure class="how-point__img how-point__img--3"></figure>
                 <div class="how-point__box">
@@ -417,195 +408,197 @@
                 </li>
               </ul>
             </div>
-            <div class="tabs-block__content table level">
-              <div class="table__header table-row table-header">
-                <div class="table-header__item table-row__item level__head">Уровень</div>
-                <div class="table-header__item table-row__item level__investment">% от вложений</div>
-                <div class="table-header__item table-row__item level__pay">% от выплаты</div>
-              </div>
-              <div class="level__content" id="tab-1">
-                <div class="table-row">
-                  <div class="table-row__item level__head">1 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
+            <div class="tabs-block__wrap">
+              <div class="tabs-block__content table level">
+                <div class="table__header table-row table-header">
+                  <div class="table-header__item table-row__item level__head">Уровень</div>
+                  <div class="table-header__item table-row__item level__investment">% от вложений</div>
+                  <div class="table-header__item table-row__item level__pay">% от выплаты</div>
                 </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">2 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
+                <div class="level__content" id="tab-1">
+                  <div class="table-row">
+                    <div class="table-row__item level__head">1 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">2 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">3 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">4 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">5 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">6 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">7 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
                 </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">3 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
+                <div class="level__content" id="tab-2">
+                  <div class="table-row">
+                    <div class="table-row__item level__head">1 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">2 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">3 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">4 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">5 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">6 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">7 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
                 </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">4 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
+                <div class="level__content" id="tab-3">
+                  <div class="table-row">
+                    <div class="table-row__item level__head">1 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">2 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">3 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">4 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">5 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">6 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">7 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
                 </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">5 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
+                <div class="level__content" id="tab-4">
+                  <div class="table-row">
+                    <div class="table-row__item level__head">1 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">2 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">3 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">4 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">5 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">6 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">7 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
                 </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">6 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">7 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-              </div>
-              <div class="level__content" id="tab-2">
-                <div class="table-row">
-                  <div class="table-row__item level__head">1 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">2 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">3 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">4 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">5 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">6 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">7 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-              </div>
-              <div class="level__content" id="tab-3">
-                <div class="table-row">
-                  <div class="table-row__item level__head">1 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">2 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">3 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">4 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">5 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">6 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">7 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-              </div>
-              <div class="level__content" id="tab-4">
-                <div class="table-row">
-                  <div class="table-row__item level__head">1 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">2 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">3 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">4 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">5 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">6 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">7 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-              </div>
-              <div class="level__content" id="tab-5">
-                <div class="table-row">
-                  <div class="table-row__item level__head">1 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">2 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">3 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">4 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">5 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">6 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
-                </div>
-                <div class="table-row">
-                  <div class="table-row__item level__head">7 уровень</div>
-                  <div class="table-row__item level__investment">1%</div>
-                  <div class="table-row__item level__pay">0.5%</div>
+                <div class="level__content" id="tab-5">
+                  <div class="table-row">
+                    <div class="table-row__item level__head">1 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">2 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">3 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">4 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">5 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">6 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
+                  <div class="table-row">
+                    <div class="table-row__item level__head">7 уровень</div>
+                    <div class="table-row__item level__investment">1%</div>
+                    <div class="table-row__item level__pay">0.5%</div>
+                  </div>
                 </div>
               </div>
             </div>

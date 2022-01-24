@@ -2,7 +2,8 @@ import pluginsObject from "./plugins.js";
 
 const projectName = `finance`; // название проекта
 const distFolder = `${projectName}_dist`; // Папка продакшн
-const distFolderZip = `${distFolder}.zip`;
+
+const distFolderZip = `${distFolder}`;
 const srcFolder = `_src`; // Папка разработки
 
 const mode = pluginsObject.minimist(process.argv.slice(2))._[0];

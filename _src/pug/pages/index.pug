@@ -10,11 +10,17 @@ block content
 
 			.promo__video.video
 				.video__inner
-					video.video__body#video-promo(width="1320" height="446" poster="/img/poster.png")
+					//- video.video__body#video-promo(width="1320" height="446" poster="/img/poster.png")
 						source(src="/video/test.mp4" type="video/mp4")
 						source(src="/video/test.webm" type="video/webm")
 
-					button.video__btn(type="button")
+					//- .video__body#video-promo
+
+					lite-youtube.video__youtube(videoid="MyRhhKPbU8k" style="background-image: url('/img/desc.jpg');")
+
+
+
+					//- button.video__btn(type="button")
 						+img-retina(`video_btn`, `png`, `кнопка видео`, `video__btn`, `262`, `262`)
 
 	.fire.mb160
@@ -22,9 +28,9 @@ block content
 		section.how.mb160
 			.how__inner.container
 				h2.how__title.title(data-scroll data-scroll-speed="1") Как это работает?
-				ul.how__list(data-scroll data-scroll-speed="2")
+				ul.how__list.swiper-wrapper(data-scroll data-scroll-speed="2")
 					each val, i in how
-						li.how__item.how-point
+						li.how__item.how-point.swiper-slide
 							.how-point__inner
 								figure.how-point__img(class=`how-point__img--${i+1}`)
 								.how-point__box
@@ -221,22 +227,23 @@ block content
 										a.tabs-header__link(href=`#tab-${i+1}` data-tabby-default)= item
 									else
 										a.tabs-header__link(href=`#tab-${i+1}`)= item
-					.tabs-block__content.table.level
-						.table__header.table-row.table-header
-							each item in table_header_modal
-								.table-header__item.table-row__item(class= item[1])= item[0]
-						each item, i in tabs_item
-							.level__content(id=`tab-${i+1}`)
+					.tabs-block__wrap
+						.tabs-block__content.table.level
+							.table__header.table-row.table-header
+								each item in table_header_modal
+									.table-header__item.table-row__item(class= item[1])= item[0]
+							each item, i in tabs_item
+								.level__content(id=`tab-${i+1}`)
 
-								while n  < 7
-									- n++
-									.table-row
-										each elem,j in table_header_modal
-											if j === 0
-												.table-row__item(class= elem[1])= `${n} уровень`
-											if j === 1
-												.table-row__item(class= elem[1]) 1%
-											if j === 2
-												.table-row__item(class= elem[1]) 0.5%
-												|
-								- n = 0
+									while n  < 7
+										- n++
+										.table-row
+											each elem,j in table_header_modal
+												if j === 0
+													.table-row__item(class= elem[1])= `${n} уровень`
+												if j === 1
+													.table-row__item(class= elem[1]) 1%
+												if j === 2
+													.table-row__item(class= elem[1]) 0.5%
+													|
+									- n = 0

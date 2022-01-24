@@ -1,17 +1,17 @@
-.left-content {
-
-  &__structure {}
-}
-
 .structure {
 
   &__title {
     margin-bottom: 40px;
   }
 
-  &__wrap {}
+  &__wrap {
+    width: 100%;
+    overflow-x: scroll;
+  }
 
-  &__list {}
+  &__list {
+    min-width: 600px;
+  }
 
   &__item {
 
@@ -34,8 +34,6 @@
   }
 
   &__point {
-
-    &--header {}
 
     &--id {
       width: 15%;

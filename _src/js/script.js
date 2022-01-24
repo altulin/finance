@@ -1573,21 +1573,134 @@ d.arcTo=function(){};d.createPattern=function(a,b){return new I(a,b)};w.prototyp
   });
 }));
 
+/**
+ * A lightweight youtube embed. Still should feel the same to the user, just MUCH faster to initialize and paint.
+ *
+ * Thx to these as the inspiration
+ *   https://storage.googleapis.com/amp-vs-non-amp/youtube-lazy.html
+ *   https://autoplay-youtube-player.glitch.me/
+ *
+ * Once built it, I also found these:
+ *   https://github.com/ampproject/amphtml/blob/master/extensions/amp-youtube (👍👍)
+ *   https://github.com/Daugilas/lazyYT
+ *   https://github.com/vb/lazyframe
+ */
+class LiteYTEmbed extends HTMLElement {
+    connectedCallback() {
+        this.videoId = this.getAttribute('videoid');
+
+        let playBtnEl = this.querySelector('.lty-playbtn');
+        // A label for the button takes priority over a [playlabel] attribute on the custom-element
+        this.playLabel = (playBtnEl && playBtnEl.textContent.trim()) || this.getAttribute('playlabel') || 'Play';
+
+        /**
+         * Lo, the youtube placeholder image!  (aka the thumbnail, poster image, etc)
+         *
+         * See https://github.com/paulirish/lite-youtube-embed/blob/master/youtube-thumbnail-urls.md
+         *
+         * TODO: Do the sddefault->hqdefault fallback
+         *       - When doing this, apply referrerpolicy (https://github.com/ampproject/amphtml/pull/3940)
+         * TODO: Consider using webp if supported, falling back to jpg
+         */
+        if (!this.style.backgroundImage) {
+          this.style.backgroundImage = `url("https://i.ytimg.com/vi/${this.videoId}/hqdefault.jpg")`;
+        }
+
+        // Set up play button, and its visually hidden label
+        if (!playBtnEl) {
+            playBtnEl = document.createElement('button');
+            playBtnEl.type = 'button';
+            playBtnEl.classList.add('lty-playbtn');
+            this.append(playBtnEl);
+        }
+        if (!playBtnEl.textContent) {
+            const playBtnLabelEl = document.createElement('span');
+            playBtnLabelEl.className = 'lyt-visually-hidden';
+            playBtnLabelEl.textContent = this.playLabel;
+            playBtnEl.append(playBtnLabelEl);
+        }
+
+        // On hover (or tap), warm up the TCP connections we're (likely) about to use.
+        this.addEventListener('pointerover', LiteYTEmbed.warmConnections, {once: true});
+
+        // Once the user clicks, add the real iframe and drop our play button
+        // TODO: In the future we could be like amp-youtube and silently swap in the iframe during idle time
+        //   We'd want to only do this for in-viewport or near-viewport ones: https://github.com/ampproject/amphtml/pull/5003
+        this.addEventListener('click', this.addIframe);
+    }
+
+    // // TODO: Support the the user changing the [videoid] attribute
+    // attributeChangedCallback() {
+    // }
+
+    /**
+     * Add a <link rel={preload | preconnect} ...> to the head
+     */
+    static addPrefetch(kind, url, as) {
+        const linkEl = document.createElement('link');
+        linkEl.rel = kind;
+        linkEl.href = url;
+        if (as) {
+            linkEl.as = as;
+        }
+        document.head.append(linkEl);
+    }
+
+    /**
+     * Begin pre-connecting to warm up the iframe load
+     * Since the embed's network requests load within its iframe,
+     *   preload/prefetch'ing them outside the iframe will only cause double-downloads.
+     * So, the best we can do is warm up a few connections to origins that are in the critical path.
+     *
+     * Maybe `<link rel=preload as=document>` would work, but it's unsupported: http://crbug.com/593267
+     * But TBH, I don't think it'll happen soon with Site Isolation and split caches adding serious complexity.
+     */
+    static warmConnections() {
+        if (LiteYTEmbed.preconnected) return;
+
+        // The iframe document and most of its subresources come right off youtube.com
+        LiteYTEmbed.addPrefetch('preconnect', 'https://www.youtube-nocookie.com');
+        // The botguard script is fetched off from google.com
+        LiteYTEmbed.addPrefetch('preconnect', 'https://www.google.com');
+
+        // Not certain if these ad related domains are in the critical path. Could verify with domain-specific throttling.
+        LiteYTEmbed.addPrefetch('preconnect', 'https://googleads.g.doubleclick.net');
+        LiteYTEmbed.addPrefetch('preconnect', 'https://static.doubleclick.net');
+
+        LiteYTEmbed.preconnected = true;
+    }
+
+    addIframe() {
+        if (this.classList.contains('lyt-activated')) return;
+        this.classList.add('lyt-activated');
+
+        const params = new URLSearchParams(this.getAttribute('params') || []);
+        params.append('autoplay', '1');
+
+        const iframeEl = document.createElement('iframe');
+        iframeEl.width = 560;
+        iframeEl.height = 315;
+        // No encoding necessary as [title] is safe. https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#:~:text=Safe%20HTML%20Attributes%20include
+        iframeEl.title = this.playLabel;
+        iframeEl.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+        iframeEl.allowFullscreen = true;
+        // AFAIK, the encoding here isn't necessary for XSS, but we'll do it only because this is a URL
+        // https://stackoverflow.com/q/64959723/89484
+        iframeEl.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(this.videoId)}?${params.toString()}`;
+        this.append(iframeEl);
+
+        // Set focus for a11y
+        iframeEl.focus();
+    }
+}
+// Register custom element
+customElements.define('lite-youtube', LiteYTEmbed);
+
 /*! tabbyjs v12.0.3 | (c) 2019 Chris Ferdinandi | MIT License | http://github.com/cferdinandi/tabby */
 Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector),(function(e,t){"function"==typeof define&&define.amd?define([],(function(){return t(e)})):"object"==typeof exports?module.exports=t(e):e.Tabby=t(e)})("undefined"!=typeof global?global:"undefined"!=typeof window?window:this,(function(e){"use strict";var t={idPrefix:"tabby-toggle_",default:"[data-tabby-default]"},r=function(t){if(t&&"true"!=t.getAttribute("aria-selected")){var r=document.querySelector(t.hash);if(r){var o=(function(e){var t=e.closest('[role="tablist"]');if(!t)return{};var r=t.querySelector('[role="tab"][aria-selected="true"]');if(!r)return{};var o=document.querySelector(r.hash);return r.setAttribute("aria-selected","false"),r.setAttribute("tabindex","-1"),o?(o.setAttribute("hidden","hidden"),{previousTab:r,previousContent:o}):{previousTab:r}})(t);!(function(e,t){e.setAttribute("aria-selected","true"),e.setAttribute("tabindex","0"),t.removeAttribute("hidden"),e.focus()})(t,r),o.tab=t,o.content=r,(function(t,r){var o;"function"==typeof e.CustomEvent?o=new CustomEvent("tabby",{bubbles:!0,cancelable:!0,detail:r}):(o=document.createEvent("CustomEvent")).initCustomEvent("tabby",!0,!0,r),t.dispatchEvent(o)})(t,o)}}},o=function(e,t){var o=(function(e){var t=e.closest('[role="tablist"]'),r=t?t.querySelectorAll('[role="tab"]'):null;if(r)return{tabs:r,index:Array.prototype.indexOf.call(r,e)}})(e);if(o){var n,i=o.tabs.length-1;["ArrowUp","ArrowLeft","Up","Left"].indexOf(t)>-1?n=o.index<1?i:o.index-1:["ArrowDown","ArrowRight","Down","Right"].indexOf(t)>-1?n=o.index===i?0:o.index+1:"Home"===t?n=0:"End"===t&&(n=i),r(o.tabs[n])}};return function(n,i){var a,u,l={};l.destroy=function(){var e=u.querySelectorAll("a");Array.prototype.forEach.call(e,(function(e){var t=document.querySelector(e.hash);t&&(function(e,t,r){e.id.slice(0,r.idPrefix.length)===r.idPrefix&&(e.id=""),e.removeAttribute("role"),e.removeAttribute("aria-controls"),e.removeAttribute("aria-selected"),e.removeAttribute("tabindex"),e.closest("li").removeAttribute("role"),t.removeAttribute("role"),t.removeAttribute("aria-labelledby"),t.removeAttribute("hidden")})(e,t,a)})),u.removeAttribute("role"),document.documentElement.removeEventListener("click",c,!0),u.removeEventListener("keydown",d,!0),a=null,u=null},l.setup=function(){if(u=document.querySelector(n)){var e=u.querySelectorAll("a");u.setAttribute("role","tablist"),Array.prototype.forEach.call(e,(function(e){var t=document.querySelector(e.hash);t&&(function(e,t,r){e.id||(e.id=r.idPrefix+t.id),e.setAttribute("role","tab"),e.setAttribute("aria-controls",t.id),e.closest("li").setAttribute("role","presentation"),t.setAttribute("role","tabpanel"),t.setAttribute("aria-labelledby",e.id),e.matches(r.default)?e.setAttribute("aria-selected","true"):(e.setAttribute("aria-selected","false"),e.setAttribute("tabindex","-1"),t.setAttribute("hidden","hidden"))})(e,t,a)}))}},l.toggle=function(e){var t=e;"string"==typeof e&&(t=document.querySelector(n+' [role="tab"][href*="'+e+'"]')),r(t)};var c=function(e){var t=e.target.closest(n+' [role="tab"]');t&&(e.preventDefault(),r(t))},d=function(e){var t=document.activeElement;t.matches(n+' [role="tab"]')&&(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Up","Down","Left","Right","Home","End"].indexOf(e.key)<0||o(t,e.key))};return a=(function(){var e={};return Array.prototype.forEach.call(arguments,(function(t){for(var r in t){if(!t.hasOwnProperty(r))return;e[r]=t[r]}})),e})(t,i||{}),l.setup(),(function(t){if(!(e.location.hash.length<1)){var o=document.querySelector(t+' [role="tab"][href*="'+e.location.hash+'"]');r(o)}})(n),document.documentElement.addEventListener("click",c,!0),u.addEventListener("keydown",d,!0),l}}));
 /*! tabbyjs v12.0.3 | (c) 2019 Chris Ferdinandi | MIT License | http://github.com/cferdinandi/tabby */
 Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector),Element.prototype.closest||(Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector),Element.prototype.closest=function(e){var t=this;if(!document.documentElement.contains(this))return null;do{if(t.matches(e))return t;t=t.parentElement}while(null!==t);return null}),(function(e,t){"function"==typeof define&&define.amd?define([],(function(){return t(e)})):"object"==typeof exports?module.exports=t(e):e.Tabby=t(e)})("undefined"!=typeof global?global:"undefined"!=typeof window?window:this,(function(e){"use strict";var t={idPrefix:"tabby-toggle_",default:"[data-tabby-default]"},r=function(t){if(t&&"true"!=t.getAttribute("aria-selected")){var r=document.querySelector(t.hash);if(r){var o=(function(e){var t=e.closest('[role="tablist"]');if(!t)return{};var r=t.querySelector('[role="tab"][aria-selected="true"]');if(!r)return{};var o=document.querySelector(r.hash);return r.setAttribute("aria-selected","false"),r.setAttribute("tabindex","-1"),o?(o.setAttribute("hidden","hidden"),{previousTab:r,previousContent:o}):{previousTab:r}})(t);!(function(e,t){e.setAttribute("aria-selected","true"),e.setAttribute("tabindex","0"),t.removeAttribute("hidden"),e.focus()})(t,r),o.tab=t,o.content=r,(function(t,r){var o;"function"==typeof e.CustomEvent?o=new CustomEvent("tabby",{bubbles:!0,cancelable:!0,detail:r}):(o=document.createEvent("CustomEvent")).initCustomEvent("tabby",!0,!0,r),t.dispatchEvent(o)})(t,o)}}},o=function(e,t){var o=(function(e){var t=e.closest('[role="tablist"]'),r=t?t.querySelectorAll('[role="tab"]'):null;if(r)return{tabs:r,index:Array.prototype.indexOf.call(r,e)}})(e);if(o){var n,i=o.tabs.length-1;["ArrowUp","ArrowLeft","Up","Left"].indexOf(t)>-1?n=o.index<1?i:o.index-1:["ArrowDown","ArrowRight","Down","Right"].indexOf(t)>-1?n=o.index===i?0:o.index+1:"Home"===t?n=0:"End"===t&&(n=i),r(o.tabs[n])}};return function(n,i){var a,l,u={};u.destroy=function(){var e=l.querySelectorAll("a");Array.prototype.forEach.call(e,(function(e){var t=document.querySelector(e.hash);t&&(function(e,t,r){e.id.slice(0,r.idPrefix.length)===r.idPrefix&&(e.id=""),e.removeAttribute("role"),e.removeAttribute("aria-controls"),e.removeAttribute("aria-selected"),e.removeAttribute("tabindex"),e.closest("li").removeAttribute("role"),t.removeAttribute("role"),t.removeAttribute("aria-labelledby"),t.removeAttribute("hidden")})(e,t,a)})),l.removeAttribute("role"),document.documentElement.removeEventListener("click",c,!0),l.removeEventListener("keydown",s,!0),a=null,l=null},u.setup=function(){if(l=document.querySelector(n)){var e=l.querySelectorAll("a");l.setAttribute("role","tablist"),Array.prototype.forEach.call(e,(function(e){var t=document.querySelector(e.hash);t&&(function(e,t,r){e.id||(e.id=r.idPrefix+t.id),e.setAttribute("role","tab"),e.setAttribute("aria-controls",t.id),e.closest("li").setAttribute("role","presentation"),t.setAttribute("role","tabpanel"),t.setAttribute("aria-labelledby",e.id),e.matches(r.default)?e.setAttribute("aria-selected","true"):(e.setAttribute("aria-selected","false"),e.setAttribute("tabindex","-1"),t.setAttribute("hidden","hidden"))})(e,t,a)}))}},u.toggle=function(e){var t=e;"string"==typeof e&&(t=document.querySelector(n+' [role="tab"][href*="'+e+'"]')),r(t)};var c=function(e){var t=e.target.closest(n+' [role="tab"]');t&&(e.preventDefault(),r(t))},s=function(e){var t=document.activeElement;t.matches(n+' [role="tab"]')&&(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Up","Down","Left","Right","Home","End"].indexOf(e.key)<0||o(t,e.key))};return a=(function(){var e={};return Array.prototype.forEach.call(arguments,(function(t){for(var r in t){if(!t.hasOwnProperty(r))return;e[r]=t[r]}})),e})(t,i||{}),u.setup(),(function(t){if(!(e.location.hash.length<1)){var o=document.querySelector(t+' [role="tab"][href*="'+e.location.hash+'"]');r(o)}})(n),document.documentElement.addEventListener("click",c,!0),l.addEventListener("keydown",s,!0),u}}));
 const startWidth = $(window).width();
-// const windowWidth = window.innerWidth;
-// let infoSwiper;
-
-// const actualYear = () => {
-//   const year = new Date().getFullYear();
-
-//   if (document.querySelector("[data-actual-year]")) {
-//     document.querySelector("[data-actual-year]").textContent = year;
-//   }
-// };
 
 const check = (element) => {
   if (element.length > 0) {
@@ -1595,473 +1708,6 @@ const check = (element) => {
   }
 
   return false;
-};
-
-// const getAccordionNav = () => {
-//   const accordionNav = $(".nav__item--down");
-
-//   if (check(accordionNav) && windowWidth <= 1000)
-//     $(".nav__item--down").accordion({
-//       transitionSpeed: 400,
-//     });
-// };
-
-// const getDropDown = () => {
-//   const itemDown = $(".nav__item--down");
-//   const classActive = "nav__item--down-active";
-
-//   const addClass = () => {
-//     itemDown.addClass(classActive);
-//   };
-
-//   const removeClass = () => {
-//     itemDown.removeClass(classActive);
-//   };
-
-//   if (check(itemDown) && windowWidth > 1000) {
-//     itemDown.on("mouseover", () => {
-//       addClass();
-//     });
-
-//     itemDown.on("mouseleave", () => {
-//       removeClass();
-//     });
-//   }
-// };
-
-// const getMenuMobile = () => {
-//   const navMenu = document.querySelector(".header__nav");
-
-//   if (navMenu !== null && windowWidth <= 1000) {
-//     const linkOpen = $(".header__link--open");
-//     const linkClose = $(".header__link--close");
-//     const menuLink = $(".menu-link");
-//     const subMenuLink = $(".sub-list__link");
-
-//     const menuMobile = new MmenuLight(navMenu);
-
-//     const drawer = menuMobile.offcanvas();
-
-//     linkOpen.on("click", (e) => {
-//       e.preventDefault();
-//       drawer.open();
-//     });
-
-//     linkClose.on("click", (e) => {
-//       e.preventDefault();
-//       drawer.close();
-//     });
-
-//     menuLink.on("click", (e) => {
-//       e.preventDefault();
-//       drawer.close();
-//     });
-
-//     subMenuLink.on("click", (e) => {
-//       e.preventDefault();
-//       drawer.close();
-//     });
-//   }
-// };
-
-// const createModal = (modal) => {
-//   modal.modal({
-//     fadeDuration: 200,
-//   });
-// };
-
-// const getConsultationModal = () => {
-//   const modal = $("#modal-consultation");
-//   const link = $(".open-modal-consultation");
-
-//   if (check(modal)) {
-//     link.on("click", (e) => {
-//       e.preventDefault();
-//       createModal(modal);
-//     });
-//   }
-// };
-
-// const getSuccessModal = () => {
-//   const modal = $("#modal-success");
-
-//   if (check(modal)) {
-//     createModal(modal);
-//   }
-// };
-
-// const sendFormConsultation = () => {
-//   const form = $(".form-consultation");
-
-//   if (check(form)) {
-//     form.on("submit", (e) => {
-//       const data = $(this).serialize();
-
-//       e.preventDefault();
-
-//       $.ajax({
-//         url: "https://httpbin.org/anything",
-//         method: "post",
-//         dataType: "json",
-//         data,
-//         success(data) {
-//           getSuccessModal();
-//           form.find(".reset").val("");
-//         },
-//       });
-//     });
-//   }
-// };
-
-// const sendFormRecord = () => {
-//   const form = $(".record-form");
-
-//   if (check(form)) {
-//     form.on("submit", (e) => {
-//       const data = $(this).serialize();
-
-//       e.preventDefault();
-
-//       $.ajax({
-//         url: "https://httpbin.org/anything",
-//         method: "post",
-//         dataType: "json",
-//         data,
-//         success(data) {
-//           getSuccessModal();
-//           form.find(".reset").val("");
-//         },
-//       });
-//     });
-//   }
-// };
-
-// const getInputMask = () => {
-//   const input = $(".mask");
-
-//   if (check(input)) {
-//     input.inputmask({
-//       // mask: "+7 (999) 999-9999",
-//       regex: "\\+7\\([0-79]{1}[0-9]{2}\\)\\-[0-9]{3}\\-[0-9]{4}",
-//       keepStatic: true,
-//     });
-//   }
-// };
-
-// const getConsultationSlider = () => {
-//   const slider = $(".slider__left");
-
-//   if (check(slider)) {
-//     const swiper = new Swiper(".slider__left", {
-//       loop: true,
-//       spaceBetween: 50,
-
-//       pagination: {
-//         el: ".slider__pagination",
-//         bulletClass: "slider__bullet",
-//         clickable: true,
-//       },
-
-//       // Navigation arrows
-//       navigation: {
-//         nextEl: ".swiper-button-next",
-//         prevEl: ".swiper-button-prev",
-//       },
-//     });
-//   }
-// };
-
-// const getInfoSlider = () => {
-//   const slider = $(".slider-info__container");
-
-//   if (check(slider)) {
-//     infoSwiper = new Swiper(".slider-info__container", {
-//       loop: true,
-//       effect: "fade",
-//       allowTouchMove: false,
-//       initialSlide: 0,
-//       fadeEffect: {
-//         crossFade: true,
-//       },
-//     });
-//   }
-// };
-
-// const getInteriorSlider = () => {
-//   const slider = $(".slider-interior__container");
-//   const current = $(".interior-controls__current");
-//   const sum = $(".interior-controls__sum");
-
-//   if (check(slider) && check(current) && check(sum)) {
-//     const swiper = new Swiper(".slider-interior__container", {
-//       loop: true,
-//       spaceBetween: 50,
-//       initialSlide: 0,
-
-//       pagination: {
-//         el: ".interior-controls__pagination",
-//         bulletClass: "slider__bullet",
-//         clickable: true,
-//       },
-
-//       navigation: {
-//         nextEl: ".interior-controls__next",
-//         prevEl: ".interior-controls__prev",
-//       },
-
-//       on: {
-//         afterInit(e) {
-//           current.text(e.realIndex + 1);
-//           sum.text(e.slides.length - 2);
-//         },
-
-//         slideChange(e) {
-//           current.text(e.realIndex + 1);
-//         },
-//       },
-
-//       controller: {
-//         control: infoSwiper,
-//       },
-//     });
-//   }
-// };
-
-// const getExamleSlider = () => {
-//   const slider = $(".example-slider");
-//   const items = $(".example-decor__item");
-//   const current = $(".example-slider__index-current");
-//   const sum = $(".example-slider__index-sum");
-//   let swiper;
-
-//   const changeSlade = (e) => {
-//     $(items).on("click", (evt) => {
-//       evt.preventDefault();
-//       swiper.slideToLoop(Number(evt.target.dataset.slider_num));
-//     });
-//   };
-
-//   if (check(slider)) {
-//     swiper = new Swiper(".example-slider", {
-//       spaceBetween: 50,
-//       loop: true,
-//       autoHeight: true,
-
-//       navigation: {
-//         nextEl: ".example-slider__next",
-//         prevEl: ".example-slider__prev",
-//       },
-
-//       on: {
-//         afterInit(e) {
-//           $(items[e.realIndex]).addClass("example-decor__item--current");
-//           changeSlade(e);
-//           current.text(e.realIndex + 1);
-//           sum.text(e.slides.length - 2);
-//         },
-
-//         slideChange(e) {
-//           $(items).removeClass("example-decor__item--current");
-//           $(items[e.realIndex]).addClass("example-decor__item--current");
-//           current.text(e.realIndex + 1);
-//         },
-//       },
-//     });
-//   }
-// };
-
-// const marks = new Map([
-//   [
-//     "mir",
-//     [
-//       "Салон «Мир мебели»",
-//       "Партизанская, 56",
-//       "пн - сб  10:00 - 20:00,  вс 11:00 - 19:00",
-//     ],
-//   ],
-//   [
-//     "etalon",
-//     [
-//       "МЦ Эталон",
-//       "Партизанская, 63., 2 этаж",
-//       "пн - сб 10:00 - 19:00, вс 11:00 - 19:00",
-//     ],
-//   ],
-// ]);
-
-// const getBallon = (name) => {
-//   return `<div class="addresses__item">
-//     <h3> ${marks.get(name)[0]}</h3>
-//       <p>${marks.get(name)[1]}</p>
-//       <p>${marks.get(name)[2]}</p>
-//   </div>`;
-// };
-
-// function initBasketMap() {
-//   const myMap = new ymaps.Map("map", {
-//     center: [52.27747, 104.30572],
-//     zoom: 16,
-//     controls: [],
-//   });
-
-//   const placemarkMir = new ymaps.Placemark(
-//     [52.27707, 104.30592],
-
-//     {
-//       balloonContent: getBallon("mir"),
-//       maxWidth: 300,
-//     },
-
-//     {
-//       iconLayout: "default#image",
-//       iconImageHref: "./img/svg/mark-map.svg",
-//       iconImageSize: [51, 73],
-//       iconImageOffset: [-25, -73],
-//       // hideIconOnBalloonOpen: false,
-//     }
-//   );
-
-//   const placemarkEtalon = new ymaps.Placemark(
-//     [52.277654, 104.306738],
-//     {
-//       balloonContent: getBallon("etalon"),
-//     },
-
-//     {
-//       iconLayout: "default#image",
-//       iconImageHref: "./img/svg/mark-map.svg",
-//       iconImageSize: [51, 73],
-//       iconImageOffset: [-25, -73],
-//       // hideIconOnBalloonOpen: false,
-//     }
-//   );
-
-//   myMap.geoObjects.add(placemarkMir);
-//   myMap.geoObjects.add(placemarkEtalon);
-
-//   // myMap.behaviors.disable("scrollZoom");
-// }
-
-// const createMap = () => {
-//   const map = $("#map");
-
-//   if (check(map)) {
-//     ymaps.ready(initBasketMap);
-//   }
-// };
-
-// const scrollToTop = () => {
-//   const link = $(".up__link");
-//   const top = $("body,html");
-
-//   if (check(link)) {
-//     link.on("click", (e) => {
-//       e.preventDefault();
-
-//       top.animate(
-//         {
-//           scrollTop: 0,
-//         },
-
-//         800
-//       );
-//     });
-//   }
-// };
-
-// const getAnchor = () => {
-//   const anchorLink = $(".anchor");
-
-//   if (check(anchorLink)) {
-//     anchorLink.on("click", (e) => {
-//       e.preventDefault();
-//       console.log(e.target);
-
-//       $("html, body")
-//         .stop()
-//         .animate(
-//           {
-//             scrollTop: $($(e.target).attr("href")).offset().top,
-//           },
-
-//           800
-//         );
-//     });
-//   }
-// };
-
-// const reload = () => {
-//   window.onresize = function () {
-//     window.location.reload();
-//   };
-// };
-
-// const scrollFunction = () => {
-//   const btnUp = $(".footer__up");
-//   const footerHeight = $(".main-footer");
-//   const bottom = footerHeight.height() - btnUp.offset().right;
-
-//   if (check(btnUp)) {
-//     window.onscroll = () => {
-//       const scrollBottom =
-//         document.documentElement.scrollHeight -
-//         document.documentElement.scrollTop -
-//         document.documentElement.clientHeight;
-
-//       if (
-//         document.body.scrollTop > 50 ||
-//         document.documentElement.scrollTop > 50
-//       ) {
-//         btnUp.addClass("up--visually");
-//       } else {
-//         btnUp.removeClass("up--visually");
-//       }
-
-//       if (scrollBottom < footerHeight.height()) {
-//         btnUp.addClass("up--position");
-
-//         btnUp.css({
-//           top: `50px`,
-//         });
-//       } else {
-//         btnUp.removeClass("up--position");
-
-//         btnUp.css({
-//           top: `auto`,
-//         });
-//       }
-//     };
-//   }
-// };
-
-let scroll;
-
-const getScroll = () => {
-  const scrollElem = $("[data-scroll-container]");
-  const linkToTop = $(".main-footer__up-link");
-
-  if (check(scrollElem)) {
-    scroll = new LocomotiveScroll({
-      el: document.querySelector("[data-scroll-container]"),
-      smooth: true,
-    });
-
-    scroll.on("scroll", (data) => {
-      const scrollTop = data.scroll.y;
-
-      if (scrollTop > 100) {
-        $(".header").addClass("header--scroll");
-      } else {
-        $(".header").removeClass("header--scroll");
-      }
-    });
-
-    if (check(linkToTop)) {
-      linkToTop.on("click", () => {
-        scroll.scrollTo("top");
-      });
-    }
-  }
 };
 
 const resize = () => {
@@ -2097,8 +1743,10 @@ const createSlider = () => {
   if (check(slider) && startWidth < 1000) {
     slider.slick({
       slidesToShow: 1,
-      speed: 600,
-      rows: 0,
+      speed: 300,
+      infinite: true,
+      fade: true,
+      cssEase: "linear",
     });
   }
 };
@@ -2240,7 +1888,22 @@ const createModalReg = () => {
     link.on("click", (e) => {
       e.preventDefault();
       $("#modal-registration").modal();
-      $(".modal__link-close").on("click", () => {
+      $(".modal__link-close").on("click", (e) => {
+        e.preventDefault();
+        $.modal.close();
+      });
+    });
+  }
+};
+
+const createModalStructure = () => {
+  const link = $(".structure__link");
+  if (check(link)) {
+    link.on("click", (e) => {
+      e.preventDefault();
+      $("#modal-structure").modal();
+      $(".modal__link-close").on("click", (e) => {
+        e.preventDefault();
         $.modal.close();
       });
     });
@@ -2263,20 +1926,6 @@ const stickyHeader = () => {
       className: "header--scroll",
       zIndex: 5,
     });
-  }
-};
-
-const stikyLink = () => {
-  const link = $(".ref-link");
-
-  if (check(link)) {
-    link.sticky({
-      topSpacing: 0,
-      className: "header--scroll",
-      zIndex: 5,
-    });
-
-
   }
 };
 
@@ -2379,39 +2028,18 @@ const createLightbox = () => {
 };
 
 $(function () {
-  // reload();
-  // getAccordionNav();
-  // getDropDown();
-  // getMenuMobile();
-  // getConsultationModal();
-  // sendFormConsultation();
-  // sendFormRecord();
-  // getInputMask();
-  // getConsultationSlider();
-  // getInfoSlider();
-  // getInteriorSlider();
-  // getExamleSlider();
-  // createMap();
-  // actualYear();
-  // scrollToTop();
-  // getAnchor();
-  // scrollFunction();
-
-  // getVideoPromo();
-  // resize();
+  resize();
   createSlider();
   createSliderNews();
   playVideo();
   makeRange(365);
   makeRange(150);
-  // getScroll();
   createAccordion();
   makeFormEvent();
   createModalReg();
+  createModalStructure();
   creatTabs();
   stickyHeader();
   createChart();
   createLightbox();
 });
-
-//# sourceMappingURL=script.js.map

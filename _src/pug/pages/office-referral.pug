@@ -44,7 +44,7 @@ block content
 								while n < 4
 									-n++
 									li.structure__item
-										a.structure__link(href="#")
+										a.structure__link(href="#modal-structure")
 											span.structure__point.structure__point--id
 												| 245678
 											span.structure__point.structure__point--name
@@ -129,22 +129,112 @@ block content
 										a.tabs-header__link(href=`#tab-${i+1}` data-tabby-default)= item
 									else
 										a.tabs-header__link(href=`#tab-${i+1}`)= item
-					.tabs-block__content.table.level
-						.table__header.table-row.table-header
-							each item in table_header_modal
-								.table-header__item.table-row__item(class= item[1])= item[0]
-						each item, i in tabs_item
-							.level__content(id=`tab-${i+1}`)
+					.tabs-block__wrap
+						.tabs-block__content.table.level
+							.table__header.table-row.table-header
+								each item in table_header_modal
+									.table-header__item.table-row__item(class= item[1])= item[0]
+							each item, i in tabs_item
+								.level__content(id=`tab-${i+1}`)
 
-								while n  < 7
-									- n++
-									.table-row
-										each elem,j in table_header_modal
-											if j === 0
-												.table-row__item(class= elem[1])= `${n} уровень`
-											if j === 1
-												.table-row__item(class= elem[1]) 1%
-											if j === 2
-												.table-row__item(class= elem[1]) 0.5%
-												|
-								- n = 0
+									while n  < 7
+										- n++
+										.table-row
+											each elem,j in table_header_modal
+												if j === 0
+													.table-row__item(class= elem[1])= `${n} уровень`
+												if j === 1
+													.table-row__item(class= elem[1]) 1%
+												if j === 2
+													.table-row__item(class= elem[1]) 0.5%
+													|
+									- n = 0
+
+
+	section.modal.modal--registration#modal-structure
+		.modal__wrapper.container
+			.modal__header
+				a.modal__logo.logo(href="/index.html")
+					+img-retina(`logo`, `png`, `логотип`, `logo__img`, `145`, `46`)
+				h2.modal__title Реферальные программы
+				a.modal__link-close(href="#" rel="modal:close" aria-label="закрыть")
+
+			.modal__content
+				.list-wrap
+					.modal__inner.list
+						.list__accordion-wrap(data-accordion-group)
+							.accordion.list__accordion(data-accordion)
+								.list__controll.controll(data-control)
+									span.controll__item.controll__item--status
+										|
+									span.controll__item.controll__item--lvl
+										| 1 lvl
+									span.controll__item.controll__item--id
+										| 245
+									span.controll__item.controll__item--date
+										| 10.11.21
+									span.controll__item.controll__item--name
+										|	Иванов Иван Иванович
+									span.controll__item.controll__item--money
+										|	5 000 $
+
+								.list__content(data-content)
+									.list__accordion-wrap(data-accordion-group)
+										-m = 0
+										while m < 3
+											-m++
+											.accordion.list__accordion(data-accordion)
+												.list__controll.controll.pl60(data-control)
+													span.controll__item.controll__item--status
+														|
+													span.controll__item.controll__item--lvl
+														| 1 lvl
+													span.controll__item.controll__item--id
+														| 245
+													span.controll__item.controll__item--date
+														| 10.11.21
+													span.controll__item.controll__item--name
+														|	Иванов Иван Иванович
+													span.controll__item.controll__item--money
+														|	5 000 $
+
+												.list__content(data-content)
+													.list__accordion-wrap(data-accordion-group)
+														while n < 3
+															-n++
+															.accordion.list__accordion(data-accordion)
+																.list__controll.controll.pl120(data-control)
+																	span.controll__item.controll__item--status
+																		|
+																	span.controll__item.controll__item--lvl
+																		| 1 lvl
+																	span.controll__item.controll__item--id
+																		| 245
+																	span.controll__item.controll__item--date
+																		| 10.11.21
+																	span.controll__item.controll__item--name
+																		|	Иванов Иван Иванович
+																	span.controll__item.controll__item--money
+																		|	5 000 $
+
+																.list__content(data-content)
+																	.list__accordion-wrap(data-accordion-group)
+																		-b =0
+																		while b < 3
+																			-b++
+																			.accordion.list__accordion(data-accordion)
+																				.list__controll.controll.pl180(data-control)
+																					span.controll__item.controll__item--status
+																						|
+																					span.controll__item.controll__item--lvl
+																						| 1 lvl
+																					span.controll__item.controll__item--id
+																						| 245
+																					span.controll__item.controll__item--date
+																						| 10.11.21
+																					span.controll__item.controll__item--name
+																						|	Иванов Иван Иванович
+																					span.controll__item.controll__item--money
+																						|	5 000 $
+														-n=0
+										-m = 0
